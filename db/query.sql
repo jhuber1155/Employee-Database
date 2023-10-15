@@ -17,3 +17,4 @@ SELECT * FROM (2nd table ) JOIN (1st table) ON (2nd table).(id, name, etc.) = (1
 Rewritten as 
 
 Select (firstletteroftable).(id,name,etc) AS (whatever name you want)
+

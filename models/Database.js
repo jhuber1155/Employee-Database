@@ -18,8 +18,8 @@ Department.init(
     {
         sequelize,
         timestamps: false,
-        underscored: true,
         freezeTableName:true,
+        underscored: true,
         modelName: 'department'
     }
 );
@@ -42,7 +42,7 @@ Role.init(
         department_id: {
             type: DataTypes.INTEGER,
             references: { 
-                model: Department,
+                model: 'department',
                 key: 'id'
             }
         }
@@ -50,13 +50,19 @@ Role.init(
     {
         sequelize,
         timestamps: false,
-        underscored: true,
         freezeTableName:true,
+        underscored: true,
         modelName: 'role'
     }
 );
 
-Department.hasOne(Role);
+Department.hasOne(Role, {
+    foreignKey: 'department_id',
+    onDelete: 'CASCADE',
+});
+Role.belongsTo(Department, {//??? Either or??
+    foreignKey: 'departmet_id',
+});
 
 class Employee extends Model {}
 
@@ -76,14 +82,14 @@ Employee.init(
         role_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: Role,
+                model: 'role',
                 key: 'id'
             }
         },
         manager_id: {
             type: DataTypes.INTEGER,
             references: {
-                model: Employee,
+                model: 'employee',
                 key: 'id'
             }
         }
@@ -91,14 +97,19 @@ Employee.init(
     {
         sequelize,
         timestamps: false,
-        underscored: true,
         freezeTableName:true,
+        underscored: true,
         modelName: 'employee'
     }
 );
 
-Role.hasOne(Employee);  //????
-Employee.hasOne(Employee); //???hasMany?
+Role.hasOne(Employee, {
+    foreignKey: 'role_id',
+    onDelete: 'CASCADE',
+  });  //????
+Employee.hasOne(Employee, {
+    foreignKey: 'manager_id',
+    onDelete: 'CASCADE'}); //???hasMany?
 
 
 module.exports = { Department, Role, Employee };
