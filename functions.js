@@ -1,20 +1,20 @@
 const { default: inquirer } = require("inquirer");
 
-// const department = [
-//     "Sales", "Engineering", "Finance", "Legal"
-// ];
+const department = [
+    "Sales", "Engineering", "Finance", "Legal"
+];
 
-// const roles = [
-//     "Sales Lead","Salesperson", "Lead Engineer", "Software Engineer","Account Manager", "Accountant", "Legal Team Lead", "Lawyer"
-// ];
+const roles = [
+    "Sales Lead","Salesperson", "Lead Engineer", "Software Engineer","Account Manager", "Accountant", "Legal Team Lead", "Lawyer"
+];
 
-// const employees = [
-//     "John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunal Singh","Malia Brown", "Sarah Lourd", "Tom Allen"
-// ];
+const employees = [
+    "John Doe", "Mike Chan", "Ashley Rodriguez", "Kevin Tupik", "Kunal Singh","Malia Brown", "Sarah Lourd", "Tom Allen"
+];
 
 viewEmployees(); {
 // app.get('/api/viewemployee', (req, res) => {
-    // const sql = `SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title, d.name AS department, r.salary AS salary, e.manager_id AS manager FROM employee e JOIN role r ON e.id = r.id JOIN department d ON r.id = d.id;`
+    // const sql = `SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title, d.name AS department, r.salary AS salary, e.manager_id AS manager FROM employee e JOIN role r ON e.role_id = r.id JOIN department d ON r.department_id = d.id;`
 //db.promise().query(sql, (err, rows) =>{
     // if(err) {
     //     res.status(500).json({
@@ -27,7 +27,7 @@ viewEmployees(); {
     //     })
     //     })
     // });
-    db.promise().query(`SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title, d.name AS department, r.salary AS salary, e.manager_id AS manager FROM employee e JOIN role r ON e.id = r.id JOIN department d ON r.id = d.id;`)  
+    db.promise().query(`SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title, d.name AS department, r.salary AS salary, e.manager_id AS manager FROM employee e JOIN role r ON e.role_id = r.id JOIN department d ON r.department_id = d.id;`)  //?????
     .then( ([rows]) => {
     console.log(rows);
 })
@@ -76,7 +76,7 @@ addEmployee(); {
         //             });
         //         });
         //     });
-        db.promise().query(`INSERT INTO employee ${first_name}, ${last_name}, ${role_id}, ${manager_id}`)
+        db.promise().query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ('${first_name}', '${last_name}', ${role_id}, ${manager_id});`)
     .then( ([rows]) => {
         console.log(rows);
     })
@@ -99,7 +99,7 @@ updateEmployee(); {
                 message: "What role do you want to assign to the selected employee?"
             },
         ])
-        db.promise().query(`UPDATE employee SET ${role_id} WHERE ${id}`)
+        db.promise().query(`UPDATE employee SET role_id = '${role_id}' WHERE id = '${id}';`)
     .then( ([rows]) => {
         console.log(rows);
     })
@@ -136,7 +136,7 @@ addRole(); {
             choices: departments
         }
     ])
-    db.promise().query(`INSERT INTO role ${title}, ${salary}, ${department_id}`)
+    db.promise().query(`INSERT INTO role (title, salary, department_id) VALUES ('${title}', ${salary}, ${department_id});`)
     .then( ([rows]) => {
         console.log(rows);
     })
@@ -162,7 +162,7 @@ addDepartment(); {
             message: "What is the name of the department?"
         },
     ])
-    db.promise().query(`INSERT INTO department ${department_name}`)
+    db.promise().query(`INSERT INTO department (name) VALUES ('${department_name}');`)
     .then( ([rows]) => {
         console.log(rows);
     })
