@@ -16,9 +16,9 @@ const startmenu = [
   { name: "View All Employees", value: viewEmployees()},
   { name: "Add Employee", value: addEmployee()},
   { name: "Update Employee Role", value: updateEmployee()},
-  { name: "View All Roles", value: viewAllRoles()},
+  { name: "View All Roles", value: viewRoles()},
   { name: "Add Role", value: addRole()},
-  { name: "View All Deparments", value: viewAllDeparments()},
+  { name: "View All Deparments", value: viewDeparments()},
   { name: "Add Department", value: addDepartment()},
   { name: "Quit", value: quit()}
 ];
@@ -65,3 +65,5 @@ sequelize.sync({ force: true }).then(() =>{
   console.log(`Server running on port ${PORT}`);
 })
 });
+
+import { department, roles, employees, viewEmployees, addEmployee, updateEmployee, viewRoles, addRole, viewDepartments, addDepartment, quit }
