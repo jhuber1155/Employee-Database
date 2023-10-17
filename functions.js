@@ -173,7 +173,7 @@
 // };
 
 // function viewEmployeeManager() {
-//     db.promise().query(`SELECT manager_id AS manager, COUNT(id) AS employee FROM employee e GROUP BY manager_id;`)
+//     db.promise().query(`SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title FROM employee e JOIN role r ON e.role_id = r.id WHERE manager_id IS null;`)
 // .then( ([rows]) => {
 //     console.log(rows);
 // })
