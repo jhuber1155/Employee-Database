@@ -1,0 +1,88 @@
+//prompt to view all employees
+db.query('SELECT * FROM employee', function (err, results) {
+    console.log(results);
+  });
+
+
+inquirer //prompt to put in new employee
+  .prompt([
+    {
+      name: 'id',
+      type: 'number',
+      message: 'What is the employees id?'
+    },
+    {
+      name: 'first_name',
+      type: 'input',
+      message: 'What is the employees first name?'
+    },
+    {
+      name: 'last_name',
+      type: 'input',
+      message: 'What is the employees last name?'
+    },
+    {
+      name: 'role_id',
+      type: 'number',
+      message: 'What is the employees role number?'
+    },
+    {
+      name: 'manager_id',
+      type: 'number',
+      message: 'What is the employees manager id number?'
+    }
+  ])
+.then((data) => {
+const sql = `INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
+    VALUES (?, ?, ?, ?, ?)`;
+  const params = [data.id, data.first_name, data.last_name, data.role_id, data.manager_id];
+  
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      console.log(err)
+      return;
+    }
+    console.log(result)
+    });
+  });
+
+
+//update employee
+inquirer
+  .prompt([
+    {
+      name: 'id',
+      type: 'input',
+      message: 'Which employee id would you like to change roles?'
+    },
+    {
+      name: 'role_id',
+      type: 'number',
+      message: 'What role id do you want the employee to have?'
+    }
+      ])
+.then((data) => {
+const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+  const params = [data.role_id, data.id];
+
+  db.query(sql, params, (err, result) => {
+    if (err) {
+    console.log(err)
+    return
+    } else if (!result.affectedRows) {
+      console.log({
+        message: 'Employee not found'
+      });
+    } else {
+      console.log({
+        message: 'success',
+        changes: result.affectedRows
+      });
+    }
+  });
+});
+
+//prompt to view all roles
+db.query('SELECT * FROM role', function (err, results) {
+    console.log(results);
+  });
