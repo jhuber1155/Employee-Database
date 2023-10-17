@@ -81,39 +81,66 @@ const db = mysql.createConnection(
 //     });
 //   });
 
+// inquirer
+//   .prompt([
+//     {
+//       name: 'id',
+//       type: 'input',
+//       message: 'Which employee id would you like to change roles?'
+//     },
+//     {
+//       name: 'role_id',
+//       type: 'number',
+//       message: 'What role id do you want the employee to have?'
+//     }
+//       ])
+// .then((data) => {
+// const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+//   const params = [data.role_id, data.id];
+
+//   db.query(sql, params, (err, result) => {
+//     if (err) {
+//     console.log(err)
+//     return
+//     } else if (!result.affectedRows) {
+//       console.log({
+//         message: 'Employee not found'
+//       });
+//     } else {
+//       console.log({
+//         message: 'success',
+//         changes: result.affectedRows
+//       });
+//     }
+//   });
+// });
+
+
 inquirer
   .prompt([
     {
       name: 'id',
-      type: 'input',
-      message: 'Which employee id would you like to change roles?'
+      type: 'number',
+      message: 'What is the id of the department?',
     },
     {
-      name: 'role_id',
-      type: 'number',
-      message: 'What role id do you want the employee to have?'
-    }
-      ])
-.then((data) => {
-const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
-  const params = [data.role_id, data.id];
-
-  db.query(sql, params, (err, result) => {
-    if (err) {
-    console.log(err)
-    return
-    } else if (!result.affectedRows) {
-      console.log({
-        message: 'Employee not found'
-      });
-    } else {
-      console.log({
-        message: 'success',
-        changes: result.affectedRows
-      });
-    }
+      name: 'department_name',
+      type: 'string',
+      message: 'What is the name of the department?',
+    },
+  ])
+  .then((data) => {
+    const sql = `INSERT INTO department (id, name) VALUES (?, ?)`;
+    const params = [data.id, data.department_name];
+    db.query(sql, params, (err, result) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log('New department added successfully!');
+    });
   });
-});
+
 
 
 // db.query('SELECT COUNT(role_id) AS total_count FROM employee GROUP BY role_id', function (err, results) {
