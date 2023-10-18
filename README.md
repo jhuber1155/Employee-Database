@@ -18,7 +18,7 @@ This particular set of code needs to be downloaded from github, cloned from the 
 
 Open the Integrated terminal in your code editor and run node server.js. From there you will be prompted to choose from a series of questions what you would like to do/change about the company and its roster of employees, roles, and departments.
 
-Link to video walkthrough: 
+Link to video walkthrough: https://drive.google.com/file/d/1Fc1O0vK2su_eAOjY2gFqdUHkhgN6Ve3g/view
 
 ## Credits
 
@@ -26,6 +26,8 @@ I would like to thank my fellow students and Instructors at the UCLA bootcamp fo
 
 Many topics with the MDN Web Docs : https://developer.mozilla.org/en-US/
 Many topics with W3Schools : https://www.w3schools.com/
+
+Documentation with Inquirer and mysql2
 
 Mostly Async/Await and new Promise:
 https://javascript.info/async-await
