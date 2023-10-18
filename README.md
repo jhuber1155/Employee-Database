@@ -12,11 +12,19 @@ This particular project will help end users manage their employees quickly and e
 
 ## Installation
 
+![Github](./images/GithubPages.png)
+
 This particular set of code needs to be downloaded from github, cloned from the repository, and then opened with the code editor of your choice. You can then download and run all the npm packages with the command line npm i. After all packages have been installed, you are ready to use the application.
+
+![Github Code](./images/GithubCode.png)
 
 ## Usage
 
+![Integrated Terminal](./images/Integrated%20Terminal.png)
+
 Open the Integrated terminal in your code editor and run node server.js. From there you will be prompted to choose from a series of questions what you would like to do/change about the company and its roster of employees, roles, and departments.
+
+![Server.js](./images/node%20server.png)
 
 Link to video walkthrough: https://drive.google.com/file/d/1Fc1O0vK2su_eAOjY2gFqdUHkhgN6Ve3g/view
 
@@ -25,13 +33,18 @@ Link to video walkthrough: https://drive.google.com/file/d/1Fc1O0vK2su_eAOjY2gFq
 I would like to thank my fellow students and Instructors at the UCLA bootcamp for helping me understand this very complex and often difficult project. I had a lot of help and guidence from everyone. I also relied on the X-pert Learner software from the UCLA bootcamp and supplemented that learning with Chat GPT when I couldnt fully understand a concept I learned. I also used many websites and have listed a few which were of use:
 
 Many topics with the MDN Web Docs : https://developer.mozilla.org/en-US/
+
 Many topics with W3Schools : https://www.w3schools.com/
 
 Documentation with Inquirer and mysql2
 
 Mostly Async/Await and new Promise:
 https://javascript.info/async-await
+
 https://www.geeksforgeeks.org/async-await-function-in-javascript/
+
 https://www.theodinproject.com/lessons/node-path-javascript-async-and-await
+
 https://www.digitalocean.com/community/tutorials/js-async-functions
+
 https://stackoverflow.com/questions/50326040/javascript-promise-with-await-explanation
