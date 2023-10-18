@@ -35,3 +35,5 @@ FOREIGN KEY (manager_id)
 REFERENCES employee(id)
 ON DELETE SET NULL
 );
+
+--The schema needed to build the database. It is based off the diagram given to us in a photo as well as the text in the paragraph format on the homework page. It has primary and foriegn keys which allow data to sync with one another based on their respective keys.--

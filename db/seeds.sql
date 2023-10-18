@@ -23,3 +23,5 @@ VALUES (1, "John", "Doe", 1, null),
 (6, "Malia", "Brown", 6, 5),
 (7, "Sarah", "Lourd", 7, null),
 (8, "Tom", "Allen", 8, 7);
+
+--All the information needed to seed the database given to us by the short video--
