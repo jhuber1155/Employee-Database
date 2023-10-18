@@ -1,46 +1,47 @@
 const express = require('express');
+const inquirer = require('inquirer');
+const mysql = require('mysql2');
 
-async function viewEmployees() {
-  return new Promise(async (resolve, reject) => {
-    try{
-    const result = db.promise().query('SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title, d.name AS department, r.salary AS salary, e.manager_id AS manager FROM employee e JOIN role r ON e.role_id = r.id JOIN department d ON r.department_id = d.id;');    
-    console.table(result);
-  } catch (error) {
-    console.log(error);
-    await displayMainMenu();
-  }
-}
-  )};
-
-async function viewEmployeeManager() {
-  return new Promise(async (resolve, reject) => {
-    try{
-    const result = db.promise().query('SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title FROM employee e JOIN role r ON e.role_id = r.id WHERE manager_id IS null;');  
+async function viewEmployees(db) {
+  try {
+    const [result] = await db.promise().query('SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title, d.name AS department, r.salary AS salary, e.manager_id AS manager FROM employee e JOIN role r ON e.role_id = r.id JOIN department d ON r.department_id = d.id;');
     console.table(result);
     return result;
   } catch (error) {
     console.log(error);
-    await displayMainMenu();
+    await displayMainMenu(db);
   }
 }
-  )};
 
+async function viewEmployeeManager(db) {
+  try {
+    const [result] = await db.promise().query('SELECT e.id AS id, e.first_name AS first_name, e.last_name AS last_name, r.title AS title FROM employee e JOIN role r ON e.role_id = r.id WHERE manager_id IS null;');  
+    console.table(result);
+  } catch (error) {
+    console.log(error);
+    await displayMainMenu(db);
+  }
+};
 
-async function addEmployee() {
+  async function addEmployee(db) {
     try {
       const title = [];
-      const roles = await viewRoles();
+      const rolesData = await db.promise().query('SELECT id, title FROM role');
+      const roles = rolesData[0];
       for (let i = 0; i < roles.length; i++) {
         title.push({ name: roles[i].title, value: roles[i].id });
       }
-  
+      
       const manager = [];
-      const managers = await viewEmployeeManager();
+      manager.push({ name: 'None', value: null })
+      const managersData = await db.promise().query('SELECT id, first_name, last_name FROM employee');
+      const managers = managersData[0];
       for (let i = 0; i < managers.length; i++) {
-        manager.push({ name: managers[i].manager, value: managers[i].id });
+        manager.push({ name: managers[i].first_name + ' ' + managers[i].last_name, value: managers[i].id });
       }
   
-      const data = await inquirer.prompt([
+      const data = await inquirer
+      .prompt([
         {
           name: 'first_name',
           type: 'input',
@@ -60,15 +61,15 @@ async function addEmployee() {
         {
           name: 'manager_id',
           type: 'list',
-          message: 'What is the employee\'s manager id number?',
+          message: 'Who is the employees manager?',
           choices: manager
         }
       ]);
   
       const result = await new Promise((resolve, reject) => {
-        const sql = `INSERT INTO employee (id, first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?, ?)`;
-        const params = [data.id, data.first_name, data.last_name, data.role_id, data.manager_id];
-        db.query(sql, params, (err, result) => {
+        const sql = 'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)';
+      const params = [data.first_name, data.last_name, data.role_id, data.manager_id];
+      db.query(sql, params, (err, result) => {
           if (err) {
             reject(err);
           } else {
@@ -79,19 +80,21 @@ async function addEmployee() {
       });
     } catch (error) {
       console.log(error);
-      await displayMainMenu();
+      await displayMainMenu(db);
     }
-  }
+  };
 
-async function updateEmployee() {
+async function updateEmployee(db) {
     try{
     const  employeeList = [];
-    const employees = await viewEmployees();
-    for (i=0; i<employees.length; i++){
-    employeeList.push({name: employees[i].first_name + ' ' + employees[i].last_name, value: employees[i].id})
+    const employeesData = await db.promise().query('SELECT id, first_name, last_name FROM employee');
+    const employee = employeesData[0];
+    for (i=0; i<employee.length; i++){
+    employeeList.push({name: employee[i].first_name + ' ' + employee[i].last_name, value: employee[i].id})
     }
     const  title = [];
-    const roles = await viewRoles();
+    const rolesData = await db.promise().query('SELECT id, title FROM role');
+    const roles = rolesData[0];
     for (i=0; i<roles.length; i++){
     title.push({name: roles[i].title, value: roles[i].id})
     }
@@ -126,97 +129,87 @@ async function updateEmployee() {
     });
 }   catch (error) {
     console.log(error);
-    await displayMainMenu();
+    await displayMainMenu(db);
 }
-}
+};
 
 
-async function viewRoles() {
-  return new Promise(async (resolve, reject) => {
-    try{
-      const result = db.promise().query('SELECT r.id AS id, r.title AS title, r.salary AS salary, d.name AS department FROM role r JOIN department d ON r.department_id = d.id;');  
-      console.table(result);
-      return result;
-    } catch (error) {
-      console.log(error);
-      await displayMainMenu();
-    }
+async function viewRoles(db) {
+  try {
+    const [result] = await db.promise().query('SELECT r.id AS id, r.title AS title, r.salary AS salary, d.name AS department FROM role r JOIN department d ON r.department_id = d.id;');
+    
+    console.table(result);
+
+    return result;
+  } catch (error) {
+    console.log(error);
+    await displayMainMenu(db);
   }
-    )};
+};
 
-async function addRole() {
-  return new Promise(async (resolve, reject) => {
-    try{
+async function addRole(db) {
+  try{
     const  title = [];
-    const roles = await viewRoles();
-    for (i=0; i<roles.length; i++){
+    const rolesData = await db.promise().query('SELECT id, title FROM role')
+    const roles = rolesData[0];
+    for (let i=0; i<roles.length; i++){
     title.push({name: roles[i].title, value: roles[i].id})
     }
     const department = [];
-    const departments = await viewDepartments ();
-    for ( i=0; i<departments.length; i++){
-    department.push({name: roles[i].department, value: roles[i].id})
+    const departmentsData = await db.promise().query('SELECT id, name FROM department')
+    const departments = departmentsData[0];
+    for (i=0; i<departments.length; i++) {
+    department.push({ name: departments[i].name, value: departments[i].id });
     }
-    const data = await inquirer
-    .prompt([
+    
+    const data = await inquirer.prompt([
       {
         name: 'title',
-        type: 'list',
+        type: 'input',
         message: 'What is the title of the role?',
-        choices: title
       },
       {
         name: 'salary',
-        type: 'number',
+        type: 'input',
         message: 'What is the salary of the role?',
       },
       {
         name: 'department_id',
         type: 'list',
-        message: 'What department is the new role in?',
-        choices: department
+        message: 'Select the department for the new role:',
+        choices: department,
       },
     ]);
-
-      const result = await new Promise((resolve, reject) => {
-        const sql = `INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)`;
-        const params = [data.title, data.salary, data.department_id];
-      
-        db.query(sql, params, (err, result) => {
-          if (err) {
-            reject(err);
-           } else {
-              resolve(result);
-              console.log("New Role Created!");
-          }
-            });
-          });
-      }   catch (error) {
-          console.log(error);
-          await displayMainMenu();
-      }
-      }
-    )};
-
-function viewDepartments() {
-  return new Promise(async (resolve, reject) => {
-    try{
-      const result = db.promise().query('SELECT * FROM department', function (err, result) {
+    
+    const sql = 'INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)';
+    const params = [data.title, data.salary, data.department_id];
+    
+      db.query(sql, params, (err, result) => {
         if (err) {
           reject(err);
         } else {
           resolve(result);
-          console.table(result);
+          console.log('New Role Created!');
         }
       });
-  } catch (error) {
+    }catch (error) {
     console.log(error);
-    await displayMainMenu();
-  }
-  })
-  };
+    await displayMainMenu(db);
+  }}
 
-async function addDepartment() {
+    async function viewDepartments(db) {
+      try {
+        const [rows] = await db.promise().query('SELECT * FROM department');
+        console.table(rows);
+        return rows;
+      } catch (error) {
+        console.log(error);
+        await displayMainMenu(db);
+      }
+    };
+    
+
+async function addDepartment(db) {
   try{
    const data = await inquirer
     .prompt([
@@ -245,53 +238,56 @@ async function addDepartment() {
           });
       }   catch (error) {
           console.log(error);
-          await displayMainMenu();
+          await displayMainMenu(db);
       }
-      }
+      };
 
-async function displayMainMenu() {
+async function displayMainMenu(db) {
   try {
-    const answer = await inquirer.prompt([
-          {
-            name: 'exit',
-            type: 'confirm',
-            message: 'Do you want to return to the main menu?',
-          },
-        ]);
+      const answer = await inquirer.prompt([
+        {
+          name: 'exit',
+          type: 'confirm',
+          message: 'Do you want to return to the main menu?',
+        },
+      ]);
       
-        if (answer.exit) {
-            mainMenu();
-          } else {
-            db.end();
-            console.log('Goodbye!');
-            process.exit(0);
-          }
-        } catch (error) {
-          console.log(error);
-          await displayMainMenu();
-        }
+      if (answer.exit) {
+        mainMenu();
+      } else {
+        db.end();
+        console.log('Goodbye!');
+        process.exit(0);
       }
+    } catch (error) {
+      console.log(error);
+    }
+    };
+      
       
 
-async function updateManager() {
-  try{
-    const  manager = [];
-    const managers = await viewEmployeeManager();
-    for (i=0; i<managers.length; i++){
-    manager.push({name: managers[i].first_name + ' ' + managers[i].last_name, value: manager[i].id})
+async function updateManager(db) {
+  try {
+    const managerList = [];
+    const managersData = await db.promise().query('SELECT manager_id AS manager, COUNT(id) AS employee FROM employee e GROUP BY manager_id;');
+    const managers = managersData[0];
+    for (let i = 0; i < managers.length; i++) {
+      managerList.push({ name: managers[i].manager, value: managers[i].manager });
+      }
+    
+    const title = [];
+    const rolesData = await db.promise().query('SELECT id, title FROM role');
+    const roles = rolesData[0];
+    for (let i = 0; i < roles.length; i++) {
+      title.push({ name: roles[i].title, value: roles[i].id });
     }
-    const  title = [];
-    const roles = await viewRoles();
-    for (i=0; i<roles.length; i++){
-    title.push({name: roles[i].title, value: roles[i].id})
-    }
-  const data = await inquirer
-    .prompt([
+    
+    const data = await inquirer.prompt([
       {
         name: 'id',
         type: 'list',
         message: 'Which manager would you like to change roles?',
-        choices: manager
+        choices: managerList
       },
       {
         name: 'role_id',
@@ -299,26 +295,28 @@ async function updateManager() {
         message: 'What role do you want the manager to have?',
         choices: title
       }
-        ])
+    ]);
     const result = await new Promise((resolve, reject) => {
-    const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
+    const sql = `UPDATE employee SET role_id = ? WHERE manager_id = ?`;
+    const params = [data.role_id, data.id];
     db.query(sql, params, (err, result) => {
       if (err) {
         reject(err);
-       } else {
-          resolve(result);
-          console.log("Manager Updated!");
+      } else {
+        resolve(result);
+        console.log("Manager Updated!");
       }
-        });
-      });
-  }   catch (error) {
+    });
+  });
+      } catch (error) {
       console.log(error);
-      await displayMainMenu();
-  }
-  }
+      await displayMainMenu(db);
+      }
+    };
+    
 
-function quit() {
+function quit(db) {
     process.exit(0);
     };
 
-module.exports = { viewEmployees, viewEmployeeManager, addEmployee, updateEmployee, updateManager, viewRoles, addRole, viewDepartments, addDepartment, quit,};
+module.exports = { viewEmployees, viewEmployeeManager, addEmployee, updateEmployee, updateManager, viewRoles, addRole, viewDepartments, addDepartment, quit};
